@@ -6,4 +6,8 @@ public class Team1 {
 	{
 	System.out.println("Instance block");
 	}
+	
+	static {
+		System.out.println("Static block");
+	}
 }
