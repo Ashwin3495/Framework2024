@@ -8,7 +8,6 @@ public class TestClass {
 	
 	void m1() {
 		System.out.println("Method block");
-		System.out.println("Merge block");
 		
 	}
 }
