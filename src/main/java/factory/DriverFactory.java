@@ -28,15 +28,15 @@ public class DriverFactory {
 	public static ThreadLocal<WebDriver> tldriver = new ThreadLocal<WebDriver>();
 
 	public static String highlight;
-	public static Logger log=LogManager.getLogger(DriverFactory.class);
+	public static Logger log = LogManager.getLogger(DriverFactory.class);
 ////	public WebDriver initDriver(String browsername)  // hardcoded value
 
 	@Step("Initializing the browser : {prop}")
 	public WebDriver initDriver(Properties prop) throws Exception {
 		LogUtil.info(prop.toString());
 		String browsername = prop.getProperty("browser");
-		log.info("browser name :"+browsername);
-		
+		log.info("browser name :" + browsername);
+
 		optionsmanager = new OptionsManager(prop); // Initialize the option manager
 		highlight = prop.getProperty("highlight");
 
@@ -58,8 +58,8 @@ public class DriverFactory {
 
 		default:
 			System.out.println("Plz provide correct driver name " + browsername);
-			log.error("===========Plz provide correct driver name=============="+ browsername);	
-			
+			log.error("===========Plz provide correct driver name==============" + browsername);
+
 			throw new FrameworkException("=========== INVALID BROWSER NAME ===========");
 		}
 
@@ -96,6 +96,12 @@ public class DriverFactory {
 					fis = new FileInputStream("./src/test/resources/config/config_qa.properties");
 					break;
 				case "uat":
+					fis = new FileInputStream("./src/test/resources/config/config_uat.properties");
+					break;
+				case "dev":
+					fis = new FileInputStream("./src/test/resources/config/config_uat.properties");
+					break;
+				case "stage":
 					fis = new FileInputStream("./src/test/resources/config/config_uat.properties");
 					break;
 				default:
