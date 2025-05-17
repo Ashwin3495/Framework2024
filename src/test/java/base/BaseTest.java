@@ -45,7 +45,7 @@ public class BaseTest {
 									// browsername
 	@BeforeTest	
 //	@BeforeMethod
-	public void setup(@Optional("chrome") String browsername) throws Exception { // we cannot pass browser as it is
+	public void setup(String browsername) throws Exception { // we cannot pass browser as it is @Optional("chrome")
 																					// string
 
 		df = new DriverFactory(); // object creation
