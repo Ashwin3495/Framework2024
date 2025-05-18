@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+
+<suite name="Regression Test" verbose="2" thread-count="3" parallel="tests">
+
+<listeners>
+	<listener class-name="com.aventstack.chaintest.plugins.ChainTestListener"/>		<!-- Implementation of Chain Test Report -->
+		<listener class-name="listeners.TestAllureListener"/>	 <!-- Implementation of Allure Report listener -->
+<!-- 	<listener class-name="listeners.AnnotationTransformer"/>     Implementation of Retry listener -->
+</listeners>
+
+    <test name="Login Page Test">
+    <parameter name="browser_test" value="chrome"/>		<!-- browser value received will be initialized -->
+        <classes>
+            <class name="testNG.LoginPageTest" />	<!-- from here we will be redirected to Login Page test - Base Test - value will be sent  -->
+        </classes>
+    </test>
+    
+    
+<!--     <test name="Account Page Test">
+    <parameter name="browser_test" value="chrome"/>
+        <classes>
+            <class name="testNG.AccountPageTest" /> 
+        </classes>
+    </test>
+    
+     <test name="Search Page Test">
+    <parameter name="browser_test" value="chrome"/>
+        <classes>
+            <class name="testNG.SearchResultPageTest" /> 
+        </classes>
+    </test> -->
+    
+     
+<!--     <test name="Registration Page Test"> -->
+<!--         <classes> -->
+<!--             <class name="testNG.RegistrationPageTest" /> -->
+<!--         </classes> -->
+<!--     </test> -->
+     
+</suite>
