@@ -39,6 +39,7 @@ pipeline
             steps {
                 catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
                     git 'https://github.com/Ashwin3495/Framework2024.git'
+                    bat 'rmdir /s /q allure-results' 
                     bat "mvn clean test -Dsurefire.suiteXmlFiles=src/test/resources/testrunners/testng_CrossBrowser.xml -Denv=qa"
                     
                     
@@ -84,6 +85,7 @@ pipeline
             steps {
                 catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
                     git 'https://github.com/Ashwin3495/Framework2024.git'
+                    bat 'rmdir /s /q allure-results' 
                     bat "mvn clean test -Dsurefire.suiteXmlFiles=src/test/resources/testrunners/testng_sanity.xml -Denv=uat"
                     
                 }
