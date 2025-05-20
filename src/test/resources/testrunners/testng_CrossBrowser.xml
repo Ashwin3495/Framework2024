@@ -5,31 +5,37 @@
 
 
 
-    <test name="Login Page Test_chrome">
-    <parameter name="browser_test" value="chrome"/>		<!-- browser value received will be initialized -->
+    <test name="Login Page Test_chrome_126">
+    <parameter name="browser_test" value="chrome"/>	
+    <parameter name="browserversion" value="126.0"/>	<!-- browser value received will be initialized -->
+    <parameter name="testname" value="Login Page Test_chrome_126"/> 
         <classes>
             <class name="testNG.LoginPageTest" />	<!-- from here we will be redirected to Login Page test - Base Test - value will be sent  -->
         </classes>
     </test>
     
-    <test name="Login Page Test_edge">
-    <parameter name="browser_test" value="firefox"/>		<!-- browser value received will be initialized -->
+  <!--   <test name="Login Page Test_firefox_100">
+    <parameter name="browser_test" value="firefox"/>		browser value received will be initialized
+    <parameter name="browserversion" value="100.0"/>    
         <classes>
-            <class name="testNG.LoginPageTest" />	<!-- from here we will be redirected to Login Page test - Base Test - value will be sent  -->
+            <class name="testNG.LoginPageTest" />	from here we will be redirected to Login Page test - Base Test - value will be sent 
         </classes>
     </test>
+     -->
     
-    
-    <test name="Account Page Test_chrome">
+    <!-- <test name="Account Page Test_chrome">
     <parameter name="browser_test" value="chrome"/>
+	<parameter name="browserversion" value="123.0"/>
         <classes>
             <class name="testNG.AccountPageTest" /> 
         </classes>
-    </test>
+    </test> -->
     
     
     <test name="Account Page Test_firefox">
     <parameter name="browser_test" value="firefox"/>
+    <parameter name="browserversion" value="100.0"/>   
+    <parameter name="testname" value="Account Page Test_firefox"/> 
         <classes>
             <class name="testNG.AccountPageTest" /> 
         </classes>
@@ -37,6 +43,8 @@
      
      <test name="Search Page Test_chrome">
     <parameter name="browser_test" value="chrome"/>
+    <parameter name="browserversion" value="124.0"/>
+    <parameter name="testname" value="Search Page Test_chrome"/>    
         <classes>
             <class name="testNG.SearchResultPageTest" /> 
         </classes>
@@ -44,6 +52,8 @@
      
      <test name="Product Page Test">			<!-- there is no browser parameter so it will run on default browser mentioned in BaseTest -->
         <parameter name="browser_test" value="chrome"/>
+        <parameter name="browserversion" value="113.0"/>
+        <parameter name="testname" value="Product Page Test_chrome"/>
         <classes>
             <class name="testNG.ProductPageTest" />
         </classes>
@@ -51,6 +61,8 @@
      
     <test name="Registration Page Test">			<!-- there is no browser parameter so it will run on default browser mentioned in BaseTest -->
         <parameter name="browser_test" value="firefox"/>
+        <parameter name="browserversion" value="105.0"/>
+        <parameter name="testname" value="Registration Page Test_chrome"/>
         <classes>
             <class name="testNG.RegistrationPageTest" />
         </classes>
