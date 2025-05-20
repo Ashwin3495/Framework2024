@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Properties;
 
 import org.apache.logging.log4j.LogManager;
@@ -14,6 +16,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.remote.RemoteWebDriver;
 
 import exceptions.FrameworkException;
 import io.qameta.allure.Step;
@@ -40,16 +43,30 @@ public class DriverFactory {
 		optionsmanager = new OptionsManager(prop); // Initialize the option manager
 		highlight = prop.getProperty("highlight");
 
-		switch (browsername) {
+		switch (browsername.toLowerCase().trim()) {
 		case "chrome":
+
+			if (Boolean.parseBoolean(prop.getProperty("remote"))) {
+				// To run in remote/selenium grid/aws machine
+				initRemoteDriver("chrome");
+			} else {
 //			driver = new ChromeDriver(optionsmanager.getChromeOptions());
-			tldriver.set(new ChromeDriver(optionsmanager.getChromeOptions()));
+				tldriver.set(new ChromeDriver(optionsmanager.getChromeOptions()));
+			}
 			break;
 
 		case "edge":
-//			driver = new EdgeDriver(optionsmanager.getEdgeOptions());
+			
+			if (Boolean.parseBoolean(prop.getProperty("remote"))) {
+				// To run in remote/selenium grid/aws machine
+				initRemoteDriver("edge");
+			} else {
+//				driver = new EdgeDriver(optionsmanager.getEdgeOptions());
 			tldriver.set(new EdgeDriver(optionsmanager.getEdgeOptions()));
+			}
 			break;
+			
+			
 
 		case "firefox":
 //			driver = new FirefoxDriver(optionsmanager.getFirefoxOptions());
@@ -72,6 +89,42 @@ public class DriverFactory {
 //		return driver;
 		return getDriver(); // Once it retuns then thread local will work
 
+	}
+
+	private void initRemoteDriver(String browserName) {
+		// TODO Auto-generated method stub
+
+		switch (browserName) {
+		case "chrome":
+			try {
+				tldriver.set(
+						new RemoteWebDriver(new URL(prop.getProperty("huburl")), optionsmanager.getChromeOptions()));
+			} catch (MalformedURLException e) {
+				e.printStackTrace();
+			}
+			break;
+
+		case "firefox":
+			try {
+				tldriver.set(
+						new RemoteWebDriver(new URL(prop.getProperty("huburl")), optionsmanager.getFirefoxOptions()));
+			} catch (MalformedURLException e) {
+				e.printStackTrace();
+			}
+			break;
+
+		case "edge":
+			try {
+				tldriver.set(new RemoteWebDriver(new URL(prop.getProperty("huburl")), optionsmanager.getEdgeOptions()));
+			} catch (MalformedURLException e) {
+				e.printStackTrace();
+			}
+			break;
+
+		default:
+			System.out.println("Entered browser not supported");
+			break;
+		}
 	}
 
 	public static WebDriver getDriver() {
