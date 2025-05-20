@@ -19,11 +19,17 @@ public class OptionsManager {
 		ChromeOptions co = new ChromeOptions();
 		if ( Boolean.parseBoolean(prop.getProperty("headless"))) {
 			System.out.println("Headless");
+//			log.info("==== Running in headless mode===");
 			co.addArguments("--headless");
 		}
 		if(Boolean.parseBoolean(prop.getProperty("incognito"))) {
 			System.out.println("Incognito");
+//			log.info("==== Running in incognito mode===");
 			co.addArguments("--incognito");
+		}
+		// running in remote mode
+		if(Boolean.parseBoolean(prop.getProperty("remote"))) {
+			co.setCapability("browserName", "chrome");
 		}
 		return co;
 	}
@@ -39,6 +45,10 @@ public class OptionsManager {
 			System.out.println("Incognito");
 			fo.addArguments("--incognito");
 		}
+		// running in remote mode
+		if(Boolean.parseBoolean(prop.getProperty("remote"))) {
+			fo.setCapability("browserName", "firefox");
+		}
 		return fo;
 	}
 	
@@ -52,6 +62,10 @@ public class OptionsManager {
 		if(Boolean.parseBoolean(prop.getProperty("incognito"))) {
 			System.out.println("Incognito");
 			eo.addArguments("--incognito");
+		}
+		// running in remote mode
+		if(Boolean.parseBoolean(prop.getProperty("remote"))) {
+			eo.setCapability("browserName", "edge");
 		}
 		return eo;
 	}

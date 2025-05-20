@@ -45,7 +45,6 @@ public class DriverFactory {
 
 		switch (browsername.toLowerCase().trim()) {
 		case "chrome":
-
 			if (Boolean.parseBoolean(prop.getProperty("remote"))) {
 				// To run in remote/selenium grid/aws machine
 				initRemoteDriver("chrome");
@@ -55,8 +54,7 @@ public class DriverFactory {
 			}
 			break;
 
-		case "edge":
-			
+		case "edge":			
 			if (Boolean.parseBoolean(prop.getProperty("remote"))) {
 				// To run in remote/selenium grid/aws machine
 				initRemoteDriver("edge");
@@ -68,11 +66,16 @@ public class DriverFactory {
 			
 			
 
-		case "firefox":
-//			driver = new FirefoxDriver(optionsmanager.getFirefoxOptions());
-			tldriver.set(new FirefoxDriver(optionsmanager.getFirefoxOptions()));
+		case "firefox":			
+			if (Boolean.parseBoolean(prop.getProperty("remote"))) {
+				// To run in remote/selenium grid/aws machine
+				initRemoteDriver("firefox");
+			} else {
+//				driver = new FirefoxDriver(optionsmanager.getFirefoxOptions());
+				tldriver.set(new FirefoxDriver(optionsmanager.getFirefoxOptions()));
+			}
 			break;
-
+			
 		default:
 			System.out.println("Plz provide correct driver name " + browsername);
 			log.error("===========Plz provide correct driver name==============" + browsername);
@@ -141,7 +144,7 @@ public class DriverFactory {
 			if (envname == null) {
 				System.out.println("Running the default as environment variable is null");
 				log.warn("============Running the default as environment variable is null======================");
-				fis = new FileInputStream("./src/test/resources/config/config.properties");
+				fis = new FileInputStream("./src/test/resources/config/config_qa.properties");
 			} else {
 				System.out.println("Running the test on " + envname);
 				switch (envname.toLowerCase().trim()) {

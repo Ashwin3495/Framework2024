@@ -10,7 +10,7 @@
 </listeners>
 
     <test name="Login Page Test">
-    <parameter name="browser_test" value="chrome"/>		<!-- browser value received will be initialized -->
+    <parameter name="browser_test" value="firefox"/>		<!-- browser value received will be initialized -->
         <classes>
             <class name="testNG.LoginPageTest" />	<!-- from here we will be redirected to Login Page test - Base Test - value will be sent  -->
         </classes>
