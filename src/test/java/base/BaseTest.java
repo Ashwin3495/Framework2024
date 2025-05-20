@@ -41,11 +41,11 @@ public class BaseTest {
 	protected RegistrationPage registerpage;
 
 	@Description("Opening of Browser")
-	@Parameters({ "browser_test" }) // value received from testNG will be passed as parameter in setup method to
+	@Parameters({ "browser_test","browserversion","testname" }) // value received from testNG will be passed as parameter in setup method to
 									// browsername
 	@BeforeTest	
 //	@BeforeMethod
-	public void setup(@Optional("chrome") String browsername) throws Exception { // we cannot pass browser as it is @Optional("chrome")
+	public void setup(@Optional("chrome") String browsername, String browserversion, String testname) throws Exception { // we cannot pass browser as it is @Optional("chrome")
 																					// string
 
 		df = new DriverFactory(); // object creation
@@ -54,6 +54,8 @@ public class BaseTest {
 		if (browsername != null) {
 			pf.setProperty("browser", browsername); // Set browser (make sure key matches exactly!) name given in config
 													// file must be mentioned
+			pf.setProperty("browserversion", browserversion);
+			pf.setProperty("testname", testname);
 		}
 
 		driver = df.initDriver(pf);

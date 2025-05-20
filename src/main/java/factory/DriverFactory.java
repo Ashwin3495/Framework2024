@@ -32,7 +32,7 @@ public class DriverFactory {
 
 	public static String highlight;
 	public static Logger log = LogManager.getLogger(DriverFactory.class);
-////	public WebDriver initDriver(String browsername)  // hardcoded value
+//	public WebDriver initDriver(String browsername)  // hardcoded value
 
 	@Step("Initializing the browser : {prop}")
 	public WebDriver initDriver(Properties prop) throws Exception {
@@ -54,19 +54,17 @@ public class DriverFactory {
 			}
 			break;
 
-		case "edge":			
+		case "edge":
 			if (Boolean.parseBoolean(prop.getProperty("remote"))) {
 				// To run in remote/selenium grid/aws machine
 				initRemoteDriver("edge");
 			} else {
 //				driver = new EdgeDriver(optionsmanager.getEdgeOptions());
-			tldriver.set(new EdgeDriver(optionsmanager.getEdgeOptions()));
+				tldriver.set(new EdgeDriver(optionsmanager.getEdgeOptions()));
 			}
 			break;
-			
-			
 
-		case "firefox":			
+		case "firefox":
 			if (Boolean.parseBoolean(prop.getProperty("remote"))) {
 				// To run in remote/selenium grid/aws machine
 				initRemoteDriver("firefox");
@@ -75,7 +73,7 @@ public class DriverFactory {
 				tldriver.set(new FirefoxDriver(optionsmanager.getFirefoxOptions()));
 			}
 			break;
-			
+
 		default:
 			System.out.println("Plz provide correct driver name " + browsername);
 			log.error("===========Plz provide correct driver name==============" + browsername);
