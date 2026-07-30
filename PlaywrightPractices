@@ -1,0 +1,38 @@
+Best practices for Playwright specifically — organized for the Java + TestNG + Cucumber + POM stack we've been building, not the generic JS/TS advice most articles give:
+
+**Locators**
+- Prefer `getByRole()`, `getByLabel()`, `getByTestId()`, `getByText()` over CSS/XPath. They're resilient to markup changes and read closer to how a user finds the element.
+- Don't cache a `Locator` result as a found element — Playwright locators are lazy and re-resolve on every action, which is what makes auto-wait work. Storing `page.locator(...)` once in a Page Object field is fine; storing the result of `.first()` at construction time and reusing it across actions defeats auto-wait.
+- Chain and scope locators (`page.locator(".cart").getByRole("button")`) instead of writing one long CSS selector — it's more resilient and reads as intent.
+
+**Waiting**
+- Never `Thread.sleep()`. Playwright's actionability checks (visible, enabled, stable, receives events) run before every action — trust them.
+- For the rare case auto-wait doesn't cover (e.g., waiting on a URL change, a custom JS condition, or a network response), use `page.waitForURL()`, `page.waitForResponse()`, or `locator.waitFor()` — not a fixed sleep.
+
+**Test isolation**
+- One `BrowserContext` (and `Page`) per scenario, not per suite. This is the single most important correctness rule — it isolates cookies, storage, and cache between tests so failures don't cascade. In your Cucumber setup, this means context/page creation belongs in `@Before`/`@After` hooks, not in a suite-level `@BeforeSuite`.
+- Reuse one `Browser` instance for the whole run (expensive to launch) but a fresh `BrowserContext` per test (cheap to create).
+
+**Page Object discipline**
+- Page Objects expose business actions (`login(user, pass)`, `addToCart()`), never raw locator getters to the outside. Step definitions call the business method, not `.click()` on something the Page Object returns.
+- Constructor-inject `Page`, no static state — this is what makes parallel execution with TestNG safe.
+
+**Parallel execution**
+- TestNG `parallel="methods"` + Cucumber's `@DataProvider(parallel = true)` on the runner gets you scenario-level parallelism. Each thread needs its own `ThreadLocal<Page>` from the driver factory — if two threads share a `Page`, you'll get flaky, hard-to-reproduce failures that look like app bugs but aren't.
+
+**Assertions**
+- Use Playwright's own assertions (`assertThat(locator).isVisible()`, `.hasText()`) over grabbing a value and asserting with TestNG's `Assert`. Playwright's assertions auto-retry until timeout, so they absorb minor timing issues that would otherwise need an explicit wait.
+- Reserve TestNG/AssertJ assertions for values that didn't come from a `Locator` — e.g., asserting on API response bodies.
+
+**Debugging & failure diagnostics**
+- Turn on tracing (`context.tracing.start()` / `.stop(new Tracing.StopOptions().setPath(...))`) with screenshots and snapshots, at least on failure. The trace viewer (`npx playwright show-trace`) replays the exact DOM state at each step — this alone will save you more debugging time than any other single practice on this list.
+- Attach the trace/screenshot to your Cucumber/Extent report on scenario failure so it's one click away, not a separate file hunt.
+
+**Network**
+- Use `page.route()` to stub or intercept calls when a test needs to force an edge case (error states, empty states) that's hard to set up through the UI. Don't overuse it to bypass real integration — for your framework, that's what the separate API-testing layer is for.
+
+**Config/CI**
+- Headless in CI, headed only for local debugging — control it through your existing `ConfigReader`/environment properties, not a hardcoded flag.
+- Playwright needs its browser binaries installed once per environment (`mvn exec:java ... playwright install`) — this trips people up in fresh CI containers more than anything else on this list.
+
+The two most common sources of flaky Playwright suites, in practice: reusing a `BrowserContext` across tests, and mixing manual waits with auto-wait "just to be safe." Both fights are usually unnecessary once the isolation and locator rules above are actually followed.
