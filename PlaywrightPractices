@@ -1,4 +1,48 @@
-Best practices for Playwright specifically — organized for the Java + TestNG + Cucumber + POM stack we've been building, not the generic JS/TS advice most articles give:
+
+Highlight method
+
+# Playwright Element-Highlight Utility — Implementation Prompt
+
+## How to use this
+This is a follow-on to the Playwright BDD framework already scaffolded (`utils/`, `config/`, `pages/` layers). Paste everything below the divider into your agent once that scaffold exists — it assumes `ConfigReader` and the `pages`/`utils` packages are already in place.
+
+---
+
+You are implementing one feature inside an existing Playwright + Java + TestNG + Cucumber framework: a debug-visibility utility that flashes an element on screen right before it's used, controlled by a per-environment config flag. This ports the behavior of an existing Selenium framework's `highlightElement()` — not a copy of its code, since the underlying driver APIs differ.
+
+### Important constraint — read before writing any code
+Playwright Java has a built-in `Locator.highlight(style)` method. **Do not use it.** Playwright's own documentation states it's for interactive debugging only and explicitly says not to commit code that uses it. Since this feature needs to be a permanent, config-toggleable part of the framework (on in some environments, off in others, safe in CI), it must be built as a custom JS-based toggle, not Playwright's debug overlay.
+
+### Behavior to replicate
+- A config flag named `highlight` (`true`/`false`), set per environment properties file — mirror whatever true/false split already exists across the project's environment config files.
+- When the flag is `true`, every element resolved through the framework's shared locator helper flashes green three times (toggling background color, then restoring the original) before the calling Page Object acts on it.
+- When `false`, resolution happens with no visual effect and no added overhead.
+- This is automatic — Page Objects and step definitions never call the highlight logic directly.
+
+### What to build
+1. **`utils/ElementUtil.java`** (extend the one from the framework scaffold, don't create a parallel one):
+   - Add a `Locator find(String description, Locator locator)` (or similar) — a single method Page Objects call to obtain a `Locator` they're about to act on. This is the centralized hook point, replacing direct `page.locator(...)` calls in Page Objects for elements that are about to be used.
+   - Add `private void highlightElement(Locator locator)`:
+     - Read the flag via the existing `ConfigReader` (e.g. `ConfigReader.get("highlight")`).
+     - If true: read the element's current computed background color via `locator.evaluate("el => getComputedStyle(el).backgroundColor")`, then toggle to `rgb(0,200,0)` and back to the original three times via `locator.evaluate("(el, color) => el.style.backgroundColor = color", color)`.
+     - Use `page.waitForTimeout(20)` between color swaps for the visual pause — not `Thread.sleep()`. This is the one deliberate exception to the framework's "no fixed waits" rule, since it's pacing a cosmetic effect rather than synchronizing on application state.
+2. **Config** — add `highlight=true|false` to each existing environment properties file (`config-dev.properties`, `config-qa.properties`, etc.), matching whatever on/off split the team already uses (typically off in fast/CI environments, on for local/manual runs).
+3. **Page Objects** — update the sample Page Object from the framework scaffold to call `find()` instead of `page.locator()` directly wherever it obtains a `Locator` it's about to act on.
+
+### What NOT to do
+- Don't use `Locator.highlight()` or `Page.hideHighlight()` — debug-only API, not for committed code.
+- Don't flash every `Locator` reference indiscriminately — only ones about to be acted on or asserted against, same as the two call sites in the original (element fetch, and wait-for-visible). A `Locator` that's just being built for further chaining (e.g. `.filter()`) shouldn't trigger it.
+- Don't reintroduce `Thread.sleep()` anywhere except the one deliberate pacing call above.
+
+### Deliverable
+- Updated `ElementUtil.java` with `find()` and `highlightElement()`.
+- One updated Page Object demonstrating the pattern.
+- `highlight` property added to every environment config file.
+- A one-line note in the README on where the flag lives and what it does, so it doesn't look like dead code to the next person reading it.
+
+
+==================================================================================================================
+==Best practices for Playwright specifically — organized for the Java + TestNG + Cucumber + POM stack we've been building, not the generic JS/TS advice most articles give:
 
 **Locators**
 - Prefer `getByRole()`, `getByLabel()`, `getByTestId()`, `getByText()` over CSS/XPath. They're resilient to markup changes and read closer to how a user finds the element.
